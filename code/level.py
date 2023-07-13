@@ -3,7 +3,8 @@ from setting import *
 from tile import Tile
 from player import Player
 from debug import debug
-from support import import_csv_layout
+from support import import_csv_layout, import_folder
+from random import choice
 
 class Level:
     def __init__(self):
@@ -22,7 +23,11 @@ class Level:
         layouts = {
             'boundary': import_csv_layout('./map/map_FloorBlocks.csv'),
             'grass' : import_csv_layout('./map/map_Grass.csv'),
-            'object' : import_csv_layout('./map/map_Objects.csv'),
+            'object' : import_csv_layout('./map/map_LargeObjects.csv'),
+        }
+        graphics = {
+            'grass': import_folder('./graphics/Grass'),
+            'objects': import_folder('./graphics/objects'),
         }
 
         for style, layout in layouts.items():
@@ -34,9 +39,11 @@ class Level:
                         if style == 'boundary':
                             Tile((x,y), [self.obstacles_sprite], 'invisible')
                         if style == 'grass':
-                            pass
+                            random_grass_image = choice(graphics['grass'])
+                            Tile((x,y), [self.visible_sprite, self.obstacles_sprite], 'grass', random_grass_image)
                         if style == 'object':
-                            pass
+                            surf = graphics['objects'][int(col)]
+                            Tile((x,y), [self.visible_sprite, self.obstacles_sprite], 'object', surf)
         # for row_index, row in enumerate(WORLD_MAP):
         #     for col_index, col in enumerate(row):
         #         x = col_index * TILESIZE
